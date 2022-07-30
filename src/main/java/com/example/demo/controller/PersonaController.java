@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class PersonaController {
     @Autowired IPersonaService ipersonaService;
     
-    @GetMapping("persona/get")
+    @GetMapping("/persona/get")
     public List<Persona> getPersona() {
         return ipersonaService.getPersona();
     }

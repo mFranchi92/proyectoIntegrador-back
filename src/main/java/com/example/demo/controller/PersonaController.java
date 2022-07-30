@@ -56,7 +56,7 @@ public class PersonaController {
         
     }
     
-    @GetMapping("persona/get/profile")
+    @GetMapping("/persona/get/profile")
     public Persona findPersona(){
         return ipersonaService.findPersona((long)1);
     }

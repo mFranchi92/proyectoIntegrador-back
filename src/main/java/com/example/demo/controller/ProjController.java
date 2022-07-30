@@ -4,10 +4,10 @@
  */
 package com.example.demo.controller;
 
-import com.example.demo.Dto.DtoExp;
+import com.example.demo.Dto.DtoProj;
 import com.example.demo.Security.Controller.Message;
-import com.example.demo.entity.Experiencia;
-import com.example.demo.service.SExperiencia;
+import com.example.demo.entity.Project;
+import com.example.demo.service.SProject;
 import java.util.List;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,75 +25,76 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("explab")
+@RequestMapping("projects")
 @CrossOrigin(origins = "http://localhost:4200")
-public class ExpController {
+public class ProjController {
     @Autowired
-    SExperiencia sExperiencia;
+    SProject sProject;
     
     @GetMapping("/lista")
-    public ResponseEntity<List<Experiencia>> list(){
-        List<Experiencia> list = sExperiencia.list();
+    public ResponseEntity<List<Project>> list(){
+        List<Project> list = sProject.list();
         return new ResponseEntity(list, HttpStatus.OK);
     }
     
     @GetMapping("/detail/{id}")
-    public ResponseEntity<Experiencia> getById(@PathVariable("id") int id){
-        if(!sExperiencia.existsById(id))
+    public ResponseEntity<Project> getById(@PathVariable("id") int id){
+        if(!sProject.existsById(id))
             return new ResponseEntity(new Message("no existe"), HttpStatus.NOT_FOUND);
-        Experiencia experiencia = sExperiencia.getOne(id).get();
-        return new ResponseEntity(experiencia, HttpStatus.OK);
+        Project project = sProject.getOne(id).get();
+        return new ResponseEntity(project, HttpStatus.OK);
     }
     
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/create")
-    public ResponseEntity<?> create(@RequestBody DtoExp dtoexp) {
-        if(StringUtils.isBlank(dtoexp.getNombreExp())){
+    public ResponseEntity<?> create(@RequestBody DtoProj dtoproj) {
+        if(StringUtils.isBlank(dtoproj.getNombreProj())){
             return new ResponseEntity(new Message("El nombre es obligatorio"), HttpStatus.BAD_REQUEST);
         }
-        if(sExperiencia.existsByNombreExp(dtoexp.getNombreExp())){
-            return new ResponseEntity(new Message("Esa experiencia ya existe"), HttpStatus.BAD_REQUEST);
+        if(sProject.existsByNombreProj(dtoproj.getNombreProj())){
+            return new ResponseEntity(new Message("Ese proyecto ya existe"), HttpStatus.BAD_REQUEST);
         }
         
-        Experiencia experiencia = new Experiencia(dtoexp.getNombreExp(), dtoexp.getDescripcionExp());
+        Project project = new Project(dtoproj.getNombreProj(), dtoproj.getDescripcionProj());
         
-        sExperiencia.save(experiencia);
+        sProject.save(project);
         
-        return new ResponseEntity(new Message("Experiencia añadida"), HttpStatus.OK);
+        return new ResponseEntity(new Message("Proyecto añadido"), HttpStatus.OK);
     }
     
     @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/update/{id}")
-    public ResponseEntity<?> update(@PathVariable("id") int id, @RequestBody DtoExp dtoexp){
+    public ResponseEntity<?> update(@PathVariable("id") int id, @RequestBody DtoProj dtoproj){
         
-        if(!sExperiencia.existsById(id)){
+        if(!sProject.existsById(id)){
             return new ResponseEntity(new Message("El ID no existe"), HttpStatus.BAD_REQUEST);
         }
-        if(sExperiencia.existsByNombreExp(dtoexp.getNombreExp()) && sExperiencia.getByNombreExp(dtoexp.getNombreExp()).get().getId() != id ){
+        if(sProject.existsByNombreProj(dtoproj.getNombreProj()) && sProject.getByNombreProj(dtoproj.getNombreProj()).get().getId() != id ){
             return new ResponseEntity(new Message("Esa experiencia ya existe"), HttpStatus.BAD_REQUEST);
         }
-        if(StringUtils.isBlank(dtoexp.getNombreExp())){
+        if(StringUtils.isBlank(dtoproj.getNombreProj())){
             return new ResponseEntity(new Message("El nombre es obligatorio"), HttpStatus.BAD_REQUEST);
         }
         
-        Experiencia experiencia = sExperiencia.getOne(id).get();
+        Project project = sProject.getOne(id).get();
         
-        experiencia.setNombreExp(dtoexp.getNombreExp());
+        project.setNombreProj(dtoproj.getNombreProj());
         
-        experiencia.setDescripcionExp(dtoexp.getDescripcionExp());
+        project.setDescripcionProj(dtoproj.getDescripcionProj());
         
-        sExperiencia.save(experiencia);
+        sProject.save(project);
         
-        return new ResponseEntity(new Message("Experiencia actualizada"), HttpStatus.OK);
+        return new ResponseEntity(new Message("Proyecto actualizado"), HttpStatus.OK);
     }
     
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<?> delete(@PathVariable("id") int id) {
-        if (!sExperiencia.existsById(id)) {
+        if (!sProject.existsById(id)) {
             return new ResponseEntity(new Message("no existe"), HttpStatus.NOT_FOUND);
         }
-        sExperiencia.delete(id);
-        return new ResponseEntity(new Message("Experiencia eliminada"), HttpStatus.OK);
+        sProject.delete(id);
+        return new ResponseEntity(new Message("Proyecto eliminado"), HttpStatus.OK);
     }
+    
 }
